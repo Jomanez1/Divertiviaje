@@ -924,5 +924,10 @@ function launchConfetti(){
 }
 function stopConfetti(){ document.getElementById('confetti').innerHTML=''; }
 </script>
+<script>
+  if (typeof navigator.serviceWorker !== 'undefined') {
+    navigator.serviceWorker.register('sw.js')
+  }
+</script>
 </body>
 </html>
