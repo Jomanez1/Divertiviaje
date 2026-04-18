@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<link rel="manifest" href="manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Divertiviaje! 🌈 Concurso de Preguntas</title>
@@ -325,17 +324,23 @@ const AVATARS = ['🐯','🦊','🐸','🦄','🐼','🦁','🐨','🐮'];
 // pitch y rate son MULTIPLICADORES sobre el valor base del usuario
 // names: palabras clave para buscar en nombres de voces del sistema
 const NARRATORS = [
-  { name:'Don Trivia', icon:'🎩', preferGender:'male',   pitch:0.85, rate:0.90,
+  { name:'Don Trivia', icon:'🎩', preferGender:'male',
+    pitch:0.75, rate:0.78,   // grave y muy lento → solemne/elegante
     names:['jorge','pablo','diego','carlos','juan','male','hombre','man'] },
-  { name:'El Héroe',   icon:'🦸', preferGender:'male',   pitch:1.05, rate:1.15,
+  { name:'El Héroe',   icon:'🦸', preferGender:'male',
+    pitch:1.10, rate:1.35,   // medio-alto y muy rápido → enérgico
     names:['jorge','pablo','diego','male','man','hombre'] },
-  { name:'El Mago',    icon:'🧙', preferGender:'male',   pitch:0.80, rate:0.82,
+  { name:'El Mago',    icon:'🧙', preferGender:'male',
+    pitch:0.55, rate:0.62,   // muy grave y muy lento → misterioso
     names:['jorge','pablo','carlos','male','man'] },
-  { name:'RoboCuiz',   icon:'🤖', preferGender:'male',   pitch:0.70, rate:1.05,
+  { name:'RoboCuiz',   icon:'🤖', preferGender:'male',
+    pitch:0.60, rate:0.92,   // grave, ritmo regular → robótico
     names:['jorge','pablo','male','man'] },
-  { name:'La Reina',   icon:'👸', preferGender:'female', pitch:1.20, rate:0.88,
+  { name:'La Reina',   icon:'👸', preferGender:'female',
+    pitch:1.30, rate:0.80,   // agudo y lento → elegante femenino
     names:['mónica','monica','paloma','lucia','lucía','female','mujer','woman','laura','maria','maría'] },
-  { name:'Loro Listo', icon:'🦜', preferGender:'female', pitch:1.45, rate:1.20,
+  { name:'Loro Listo', icon:'🦜', preferGender:'female',
+    pitch:1.90, rate:1.45,   // muy agudo y muy rápido → chillón/loro
     names:['mónica','monica','paloma','lucia','lucía','female','mujer','woman','laura'] },
 ];
 
@@ -394,17 +399,146 @@ const COMMENTS = [
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
 // =====================================================
+// PREGUNTAS INCRUSTADAS (no requiere archivo externo)
+// =====================================================
+const PREGUNTAS_DB = {
+  facil:[
+    {pregunta:"¿De qué color es el cielo cuando hace sol?",opciones:["Verde","Rojo","Azul","Amarillo"],respuesta:2},
+    {pregunta:"¿Cuántas patas tiene un perro?",opciones:["2","4","6","8"],respuesta:1},
+    {pregunta:"¿Qué animal hace 'muu'?",opciones:["Caballo","Oveja","Vaca","Cerdo"],respuesta:2},
+    {pregunta:"¿Cuánto es 2 + 2?",opciones:["3","5","6","4"],respuesta:3},
+    {pregunta:"¿Qué fruta es roja por fuera y tiene pepitas pequeñas?",opciones:["Naranja","Plátano","Fresa","Mango"],respuesta:2},
+    {pregunta:"¿En qué estación del año cae nieve?",opciones:["Primavera","Verano","Otoño","Invierno"],respuesta:3},
+    {pregunta:"¿Cuántos días tiene una semana?",opciones:["5","6","7","8"],respuesta:2},
+    {pregunta:"¿Qué animal es el rey de la selva?",opciones:["Elefante","León","Tigre","Gorila"],respuesta:1},
+    {pregunta:"¿De qué color es la hierba?",opciones:["Azul","Amarilla","Verde","Morada"],respuesta:2},
+    {pregunta:"¿Cuántos colores tiene el arcoíris?",opciones:["5","6","7","8"],respuesta:2},
+    {pregunta:"¿Qué animal teje telas?",opciones:["Mosca","Araña","Abeja","Hormiga"],respuesta:1},
+    {pregunta:"¿Qué planeta es el nuestro?",opciones:["Marte","Venus","Tierra","Júpiter"],respuesta:2},
+    {pregunta:"¿Cuántos meses tiene un año?",opciones:["10","11","12","13"],respuesta:2},
+    {pregunta:"¿Qué comida le gusta más a los conejos?",opciones:["Pizza","Zanahorias","Pescado","Helado"],respuesta:1},
+    {pregunta:"¿Cómo se llama el bebé del gato?",opciones:["Cachorro","Potrillo","Gatito","Cordero"],respuesta:2},
+    {pregunta:"¿De qué color es el oso polar?",opciones:["Negro","Gris","Marrón","Blanco"],respuesta:3},
+    {pregunta:"¿Qué sale del huevo de una gallina?",opciones:["Patito","Pollito","Conejito","Perrito"],respuesta:1},
+    {pregunta:"¿Cuánto es 5 - 3?",opciones:["1","2","3","4"],respuesta:1},
+    {pregunta:"¿Qué animal tiene una trompa muy larga?",opciones:["Jirafa","Rinoceronte","Elefante","Hipopótamo"],respuesta:2},
+    {pregunta:"¿De qué color es el plátano?",opciones:["Rojo","Verde","Azul","Amarillo"],respuesta:3},
+    {pregunta:"¿Qué hace la Luna por las noches?",opciones:["Brilla en el cielo","Se esconde bajo el mar","Canta","Duerme"],respuesta:0},
+    {pregunta:"¿Cuántas orejas tiene una persona?",opciones:["1","2","3","4"],respuesta:1},
+    {pregunta:"¿Qué vehículo vuela?",opciones:["Barco","Tren","Avión","Bicicleta"],respuesta:2},
+    {pregunta:"¿En qué se convierte la oruga?",opciones:["Abeja","Mariposa","Mosca","Gusano"],respuesta:1},
+    {pregunta:"¿Cuántas ruedas tiene una bicicleta?",opciones:["1","2","3","4"],respuesta:1},
+    {pregunta:"¿Cómo se llama el satélite natural de la Tierra?",opciones:["Sol","Marte","Luna","Estrella"],respuesta:2},
+    {pregunta:"¿Qué instrumento tiene teclas blancas y negras?",opciones:["Guitarra","Piano","Flauta","Tambor"],respuesta:1},
+    {pregunta:"¿Cuántos lados tiene un triángulo?",opciones:["2","3","4","5"],respuesta:1},
+    {pregunta:"¿Cómo se llama la película de Disney con una sirenita?",opciones:["Cenicienta","La Sirenita","Blancanieves","Rapunzel"],respuesta:1},
+    {pregunta:"¿Qué personaje vive en una piña bajo el mar?",opciones:["Nemo","Bob Esponja","Doraemon","Peppa Pig"],respuesta:1},
+    {pregunta:"¿Cuántas patas tiene una araña?",opciones:["4","6","8","10"],respuesta:2},
+    {pregunta:"¿Qué hay de especial en la nariz de Pinocho?",opciones:["Brilla","Crece cuando miente","Cambia de color","Desaparece"],respuesta:1},
+    {pregunta:"¿De qué color es una zanahoria?",opciones:["Morada","Azul","Verde","Naranja"],respuesta:3},
+    {pregunta:"¿Qué animal ruge en la selva?",opciones:["Pato","Conejo","León","Tortuga"],respuesta:2},
+    {pregunta:"¿Qué necesitan las plantas para vivir?",opciones:["Música","Agua y sol","Juguetes","Frío"],respuesta:1},
+    {pregunta:"¿Cuánto es 3 + 4?",opciones:["6","7","8","9"],respuesta:1},
+    {pregunta:"¿Qué animal da lana?",opciones:["Vaca","Cerdo","Oveja","Caballo"],respuesta:2},
+    {pregunta:"¿Cuántos ojos tiene un cíclope?",opciones:["0","1","2","3"],respuesta:1},
+    {pregunta:"¿De qué están hechas las nubes?",opciones:["Algodón","Agua","Humo","Leche"],respuesta:1},
+    {pregunta:"¿Qué beben los bebés?",opciones:["Zumo","Café","Leche","Agua"],respuesta:2}
+  ],
+  media:[
+    {pregunta:"¿Cuál es la capital de España?",opciones:["Barcelona","Sevilla","Madrid","Valencia"],respuesta:2},
+    {pregunta:"¿Cuántos huesos tiene el cuerpo humano adulto?",opciones:["106","206","306","406"],respuesta:1},
+    {pregunta:"¿Quién escribió 'Don Quijote de la Mancha'?",opciones:["Lope de Vega","Federico García Lorca","Miguel de Cervantes","Francisco de Quevedo"],respuesta:2},
+    {pregunta:"¿Cuál es el planeta más grande del sistema solar?",opciones:["Saturno","Neptuno","Urano","Júpiter"],respuesta:3},
+    {pregunta:"¿En qué continente está Egipto?",opciones:["Asia","Europa","África","América"],respuesta:2},
+    {pregunta:"¿Qué órgano del cuerpo humano bombea la sangre?",opciones:["Pulmón","Corazón","Hígado","Riñón"],respuesta:1},
+    {pregunta:"¿Cuántos lados tiene un hexágono?",opciones:["4","5","6","7"],respuesta:2},
+    {pregunta:"¿Cuál es el idioma más hablado del mundo?",opciones:["Inglés","Español","Chino mandarín","Hindi"],respuesta:2},
+    {pregunta:"¿Quién pintó la Mona Lisa?",opciones:["Miguel Ángel","Rafael","Leonardo da Vinci","Botticelli"],respuesta:2},
+    {pregunta:"¿Cuál es el animal terrestre más rápido?",opciones:["León","Guepardo","Visón","Caballo"],respuesta:1},
+    {pregunta:"¿En qué país se encuentran las pirámides más famosas?",opciones:["Marruecos","Túnez","Argelia","Egipto"],respuesta:3},
+    {pregunta:"¿Cuántos planetas tiene el sistema solar?",opciones:["7","8","9","10"],respuesta:1},
+    {pregunta:"¿Cuál es la capital de Francia?",opciones:["Lyon","Marsella","París","Burdeos"],respuesta:2},
+    {pregunta:"¿Qué gas respiramos principalmente?",opciones:["Hidrógeno","Dióxido de carbono","Oxígeno","Nitrógeno"],respuesta:2},
+    {pregunta:"¿Cuántos continentes hay en la Tierra?",opciones:["5","6","7","8"],respuesta:2},
+    {pregunta:"¿Cuál es el río más largo del mundo?",opciones:["Amazonas","Nilo","Yangtsé","Misisipi"],respuesta:1},
+    {pregunta:"¿Qué deporte se juega en Wimbledon?",opciones:["Golf","Tenis","Críquet","Polo"],respuesta:1},
+    {pregunta:"¿Cuántos jugadores hay en un equipo de fútbol?",opciones:["9","10","11","12"],respuesta:2},
+    {pregunta:"¿Qué elemento químico tiene el símbolo O?",opciones:["Oro","Osmio","Oxígeno","Oganesón"],respuesta:2},
+    {pregunta:"¿En qué año llegó el hombre a la Luna?",opciones:["1965","1967","1969","1971"],respuesta:2},
+    {pregunta:"¿Cuál es la montaña más alta del mundo?",opciones:["K2","Mont Blanc","Kilimanjaro","Everest"],respuesta:3},
+    {pregunta:"¿De qué país es el sushi?",opciones:["China","Corea del Sur","Japón","Tailandia"],respuesta:2},
+    {pregunta:"¿Qué es la clorofila?",opciones:["Una vitamina","Un mineral","El pigmento verde de las plantas","Un tipo de hongo"],respuesta:2},
+    {pregunta:"¿Cuál es la capital de Japón?",opciones:["Osaka","Kioto","Hiroshima","Tokio"],respuesta:3},
+    {pregunta:"¿Qué científico formuló la teoría de la gravedad?",opciones:["Albert Einstein","Galileo Galilei","Isaac Newton","Nikola Tesla"],respuesta:2},
+    {pregunta:"¿Cuánto mide un kilómetro en metros?",opciones:["10","100","1000","10000"],respuesta:2},
+    {pregunta:"¿Qué instrumento usa un médico para escuchar el corazón?",opciones:["Tensiómetro","Termómetro","Estetoscopio","Otoscopio"],respuesta:2},
+    {pregunta:"¿Cuál es el océano más grande del mundo?",opciones:["Atlántico","Índico","Ártico","Pacífico"],respuesta:3},
+    {pregunta:"¿Qué animal produce la miel?",opciones:["Mosca","Avispa","Abeja","Mariposa"],respuesta:2},
+    {pregunta:"¿En qué país se inventó la pizza?",opciones:["España","Grecia","Francia","Italia"],respuesta:3},
+    {pregunta:"¿Cuál es el hueso más largo del cuerpo humano?",opciones:["Radio","Húmero","Tibia","Fémur"],respuesta:3},
+    {pregunta:"¿Qué ciudad es conocida como 'La Ciudad Eterna'?",opciones:["Atenas","París","Roma","El Cairo"],respuesta:2},
+    {pregunta:"¿Cuál es el metal más abundante en la corteza terrestre?",opciones:["Hierro","Cobre","Aluminio","Plata"],respuesta:2},
+    {pregunta:"¿Qué escritora creó a Hermione Granger?",opciones:["Stephenie Meyer","Suzanne Collins","J.K. Rowling","Roald Dahl"],respuesta:2},
+    {pregunta:"¿Cuál es la capital de Alemania?",opciones:["Múnich","Hamburgo","Berlín","Colonia"],respuesta:2},
+    {pregunta:"¿Cuántos jugadores tiene un equipo de baloncesto en cancha?",opciones:["4","5","6","7"],respuesta:1},
+    {pregunta:"¿Cuántas teclas tiene un piano estándar?",opciones:["72","76","88","92"],respuesta:2},
+    {pregunta:"¿Qué gas produce el efecto invernadero principalmente?",opciones:["Oxígeno","Nitrógeno","Dióxido de carbono","Hidrógeno"],respuesta:2},
+    {pregunta:"¿Cuál es el país más grande del mundo?",opciones:["Canadá","China","Estados Unidos","Rusia"],respuesta:3},
+    {pregunta:"¿Qué órgano filtra la sangre en el cuerpo humano?",opciones:["Hígado","Estómago","Riñón","Páncreas"],respuesta:2}
+  ],
+  dificil:[
+    {pregunta:"¿En qué año comenzó la Primera Guerra Mundial?",opciones:["1910","1912","1914","1916"],respuesta:2},
+    {pregunta:"¿Cuál es la fórmula química del agua?",opciones:["H2O2","HO","H2O","H3O"],respuesta:2},
+    {pregunta:"¿Quién fue el primer presidente de los Estados Unidos?",opciones:["Abraham Lincoln","Thomas Jefferson","John Adams","George Washington"],respuesta:3},
+    {pregunta:"¿Cuál es la velocidad de la luz en el vacío?",opciones:["200.000 km/s","299.792 km/s","350.000 km/s","150.000 km/s"],respuesta:1},
+    {pregunta:"¿Qué filósofo griego fue maestro de Alejandro Magno?",opciones:["Platón","Sócrates","Aristóteles","Pitágoras"],respuesta:2},
+    {pregunta:"¿En qué año cayó el Muro de Berlín?",opciones:["1987","1988","1989","1990"],respuesta:2},
+    {pregunta:"¿Quién compuso la Quinta Sinfonía?",opciones:["Mozart","Bach","Schubert","Beethoven"],respuesta:3},
+    {pregunta:"¿Cuál es el símbolo químico del oro?",opciones:["Go","Or","Au","Ag"],respuesta:2},
+    {pregunta:"¿Qué científica fue la primera en ganar dos premios Nobel?",opciones:["Rosalind Franklin","Lise Meitner","Marie Curie","Dorothy Hodgkin"],respuesta:2},
+    {pregunta:"¿En qué año se publicó 'El origen de las especies' de Darwin?",opciones:["1849","1854","1859","1864"],respuesta:2},
+    {pregunta:"¿En qué ciudad se firmó la Declaración de Independencia de EE.UU.?",opciones:["Boston","Nueva York","Washington D.C.","Filadelfia"],respuesta:3},
+    {pregunta:"¿Qué pintor español es conocido por el Guernica?",opciones:["Salvador Dalí","Joan Miró","Pablo Picasso","Francisco Goya"],respuesta:2},
+    {pregunta:"¿Cuál es el teorema de Pitágoras?",opciones:["a+b=c","a²+b²=c²","a²-b²=c","2a+b=c²"],respuesta:1},
+    {pregunta:"¿Quién escribió 'Cien años de soledad'?",opciones:["Mario Vargas Llosa","Julio Cortázar","Jorge Luis Borges","Gabriel García Márquez"],respuesta:3},
+    {pregunta:"¿En qué país se desarrolló la Revolución Industrial?",opciones:["Francia","Alemania","Reino Unido","Bélgica"],respuesta:2},
+    {pregunta:"¿Cuál es el elemento con número atómico 1?",opciones:["Helio","Hidrógeno","Litio","Berilio"],respuesta:1},
+    {pregunta:"¿Qué estructura de ADN descubrieron Watson y Crick?",opciones:["Hélice simple","Doble hélice","Triple hélice","Estructura globular"],respuesta:1},
+    {pregunta:"¿En qué año se produjo la Revolución Francesa?",opciones:["1776","1783","1789","1799"],respuesta:2},
+    {pregunta:"¿Cuál es la capital de Australia?",opciones:["Sídney","Melbourne","Brisbane","Canberra"],respuesta:3},
+    {pregunta:"¿Qué artista holandés pintó 'La noche estrellada'?",opciones:["Rembrandt","Johannes Vermeer","Vincent van Gogh","Paul Gauguin"],respuesta:2},
+    {pregunta:"¿Cuál es la moneda oficial de Japón?",opciones:["Yuan","Won","Yen","Ringgit"],respuesta:2},
+    {pregunta:"¿Quién desarrolló la teoría de la relatividad?",opciones:["Max Planck","Niels Bohr","Werner Heisenberg","Albert Einstein"],respuesta:3},
+    {pregunta:"¿En qué año se fundó la ONU?",opciones:["1943","1944","1945","1946"],respuesta:2},
+    {pregunta:"¿Cuál es el hueso más pequeño del cuerpo humano?",opciones:["Yunque","Martillo","Estribo","Patela"],respuesta:2},
+    {pregunta:"¿Qué país construyó el Canal de Suez?",opciones:["Reino Unido","Francia","Egipto","Turquía"],respuesta:1},
+    {pregunta:"¿Cuál es la ley de la gravitación universal de Newton?",opciones:["F=ma","F=G(m1·m2)/r²","E=mc²","F=mv²/r"],respuesta:1},
+    {pregunta:"¿Qué civilización construyó Machu Picchu?",opciones:["Maya","Azteca","Inca","Olmeca"],respuesta:2},
+    {pregunta:"¿Quién fue el primer ser humano en viajar al espacio?",opciones:["Neil Armstrong","Buzz Aldrin","Alan Shepard","Yuri Gagarin"],respuesta:3},
+    {pregunta:"¿Cuántos cromosomas tiene una célula humana normal?",opciones:["23","44","46","48"],respuesta:2},
+    {pregunta:"¿Qué es el ADN?",opciones:["Ácido Desoxirribonucleico","Ácido Dinucleico","Adenosín Difosfato Nucleico","Antígeno De Núcleo"],respuesta:0},
+    {pregunta:"¿En qué ciudad se celebraron los primeros Juegos Olímpicos modernos en 1896?",opciones:["Roma","París","Londres","Atenas"],respuesta:3},
+    {pregunta:"¿Qué escritor irlandés escribió 'Ulises'?",opciones:["Oscar Wilde","Samuel Beckett","James Joyce","William Butler Yeats"],respuesta:2},
+    {pregunta:"¿Cuál es el lago más profundo del mundo?",opciones:["Lago Superior","Lago Victoria","Mar Caspio","Lago Baikal"],respuesta:3},
+    {pregunta:"¿Quién fue el líder de la Revolución Cubana?",opciones:["Che Guevara","Fidel Castro","Camilo Cienfuegos","Raúl Castro"],respuesta:1},
+    {pregunta:"¿Qué arquitecto diseñó la Sagrada Familia de Barcelona?",opciones:["Rafael Moneo","Santiago Calatrava","Antoni Gaudí","Ricardo Bofill"],respuesta:2},
+    {pregunta:"¿Cuál es el número de Avogadro aproximado?",opciones:["6,02 × 10²³","6,02 × 10²¹","3,14 × 10²³","9,8 × 10²³"],respuesta:0},
+    {pregunta:"¿En qué año se estrenó la primera película con sonido sincronizado?",opciones:["1923","1925","1927","1930"],respuesta:2},
+    {pregunta:"¿Qué filósofo escribió 'El Quijote del pensamiento moderno', la Crítica de la Razón Pura?",opciones:["Descartes","Hegel","Kant","Nietzsche"],respuesta:2},
+    {pregunta:"¿Cuál es la distancia media de la Tierra al Sol?",opciones:["150 millones de km","93 millones de km","200 millones de km","75 millones de km"],respuesta:0},
+    {pregunta:"¿Qué teorema establece que en todo triángulo rectángulo la suma de los cuadrados de los catetos es igual al cuadrado de la hipotenusa?",opciones:["Teorema de Tales","Teorema de Fermat","Teorema de Pitágoras","Teorema de Euclides"],respuesta:2}
+  ]
+};
+
+// =====================================================
 // INIT
 // =====================================================
 window.addEventListener('load', () => {
   initPlayerGrid(2);
   loadVoices();
   window.speechSynthesis.onvoiceschanged = loadVoices;
-
-  fetch('preguntas.json')
-    .then(r => { if(!r.ok) throw new Error('no encontrado'); return r.json(); })
-    .then(d => applyQuestions(d))
-    .catch(() => showAlert('No se encontró preguntas.json. Asegúrate de que está en la misma carpeta y abre el HTML desde un servidor local.','error'));
+  // Cargar preguntas incrustadas directamente
+  applyQuestions(PREGUNTAS_DB);
 });
 
 // Cache de voces por narrador (se rellena lazy)
@@ -415,45 +549,89 @@ function getAllVoices(){
 }
 
 function loadVoices(){
-  // Limpiar cache al recibir nuevas voces
   Object.keys(voiceCache).forEach(k => delete voiceCache[k]);
 }
 
 // Elige la mejor voz del sistema para un narrador dado
 function selectVoiceForNarrator(narIdx){
   if(voiceCache[narIdx]) return voiceCache[narIdx];
-
   const voices = getAllVoices();
   if(!voices.length) return null;
-
   const nar = NARRATORS[narIdx];
-
-  // 1. Voces en español
   const esVoices = voices.filter(v => v.lang.startsWith('es'));
   const pool = esVoices.length ? esVoices : voices;
-
-  // 2. Intentar casar por nombre de voz con las palabras clave del narrador
   const nameLower = pool.map(v => ({ v, n: v.name.toLowerCase() }));
+  // Buscar por palabras clave de nombre
   for(const kw of nar.names){
     const match = nameLower.find(({n}) => n.includes(kw));
     if(match){ voiceCache[narIdx] = match.v; return match.v; }
   }
-
-  // 3. Filtrar por género inferido del nombre de voz
+  // Buscar por género
   if(nar.preferGender !== 'any'){
-    const femaleKw = ['mónica','monica','paloma','lucia','lucía','laura','maria','maría','female','woman','mujer','elena','rosa'];
-    const maleKw   = ['jorge','pablo','diego','carlos','juan','male','man','hombre','antonio','miguel'];
+    const femaleKw = ['mónica','monica','paloma','lucia','lucía','laura','maria','maría','female','woman','mujer','elena','rosa','isabel','sofia','sofía'];
+    const maleKw   = ['jorge','pablo','diego','carlos','juan','male','man','hombre','antonio','miguel','alejandro','enrique'];
     const kwList   = nar.preferGender === 'female' ? femaleKw : maleKw;
     for(const kw of kwList){
       const match = nameLower.find(({n}) => n.includes(kw));
       if(match){ voiceCache[narIdx] = match.v; return match.v; }
     }
+    // Si hay exactamente 2 voces es, asignar por género posicional
+    if(pool.length >= 2){
+      voiceCache[narIdx] = nar.preferGender === 'female' ? pool[1] : pool[0];
+      return voiceCache[narIdx];
+    }
   }
+  voiceCache[narIdx] = pool[0];
+  return voiceCache[narIdx];
+}
 
-  // 4. Fallback: primera voz en español o la primera disponible
-  const fallback = pool[0];
-  voiceCache[narIdx] = fallback;
-  return fallback;
+// -------------------------------------------------------
+// Transforma el texto según la personalidad del narrador
+// para que suene diferente aunque sea la misma voz base
+// -------------------------------------------------------
+function transformTextForNarrator(text, narIdx){
+  switch(narIdx){
+
+    case 0: // Don Trivia — lento, pausas largas, formal
+      return text
+        .replace(/\.\s*/g, '... ')          // pausas largas en puntos
+        .replace(/,\s*/g, ', ')
+        .replace(/¡/g, '')
+        .replace(/!/g, '.');                // elimina exclamaciones → calma
+
+    case 1: // El Héroe — enérgico, palabras cortas separadas
+      return text
+        .replace(/\.\s*/g, '! ')
+        .replace(/,\s*/g, '! ')
+        .toUpperCase();                     // todo en mayúsculas → más intenso en TTS
+
+    case 2: // El Mago — muy lento, pausas misteriosas, puntos suspensivos
+      return text
+        .replace(/\.\s*/g, '...... ')
+        .replace(/,\s*/g, '... ')
+        .replace(/¡/g, '')
+        .replace(/!/g, '...');
+
+    case 3: // RoboCuiz — palabras separadas por puntos, muy mecánico
+      return text
+        .replace(/\s+/g, '. ')             // pausa entre cada palabra
+        .replace(/\.\s*\.\s*/g, '. ')
+        .toUpperCase();
+
+    case 4: // La Reina — suave, comas frecuentes, sin gritos
+      return text
+        .replace(/¡/g, '')
+        .replace(/!/g, ',')
+        .replace(/\.\s*/g, '. ');
+
+    case 5: // Loro Listo — repite frases, muy rápido, exclamativo
+      return text
+        .replace(/\.\s*/g, '! ')
+        .replace(/,\s*/g, '! ');
+
+    default:
+      return text;
+  }
 }
 
 function speak(text, narIdxOverride){
@@ -464,10 +642,12 @@ function speak(text, narIdxOverride){
   const nar    = NARRATORS[narIdx];
   const voice  = selectVoiceForNarrator(narIdx);
 
-  const u = new SpeechSynthesisUtterance(text);
+  // Transformar texto según personalidad
+  const processedText = transformTextForNarrator(text, narIdx);
+
+  const u = new SpeechSynthesisUtterance(processedText);
   u.lang  = 'es-ES';
-  // Aplicar perfil del narrador sobre los valores base del usuario
-  u.rate  = Math.min(2, Math.max(0.5, state.ttsRate  * nar.rate));
+  u.rate  = Math.min(2, Math.max(0.4, state.ttsRate  * nar.rate));
   u.pitch = Math.min(2, Math.max(0.1, state.ttsPitch * nar.pitch));
   if(voice) u.voice = voice;
 
@@ -478,9 +658,6 @@ function speak(text, narIdxOverride){
 // CARGA JSON
 // =====================================================
 function applyQuestions(data){
-  if(!data.facil||!data.media||!data.dificil){
-    showAlert('El JSON debe tener las claves: "facil", "media" y "dificil".','error'); return;
-  }
   state.questionsDB = data;
 }
 
@@ -527,8 +704,6 @@ function testVoice(){ speak(`¡Hola! Soy ${NARRATORS[state.narratorIdx].name}. �
 // INICIO
 // =====================================================
 function startGame(){
-  if(!state.questionsDB){ showAlert('Primero carga el archivo preguntas.json.','error'); return; }
-
   const count = parseInt(document.querySelector('.pcount-btn.selected').dataset.count);
   state.players=[];
   for(let i=0;i<count;i++){
@@ -923,11 +1098,6 @@ function launchConfetti(){
   }
 }
 function stopConfetti(){ document.getElementById('confetti').innerHTML=''; }
-</script>
-<script>
-  if (typeof navigator.serviceWorker !== 'undefined') {
-    navigator.serviceWorker.register('sw.js')
-  }
 </script>
 </body>
 </html>
