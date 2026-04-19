@@ -17,9 +17,13 @@
     banner:       'ca-app-pub-3940256099942544/6300978111',  // ID prueba — Banner
     interstitial: 'ca-app-pub-3940256099942544/1033173712',  // ID prueba — Intersticial
   };
-<\/script>
+</script>
 <!-- SDK AdSense/AdMob Web -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544" crossorigin="anonymous"><\/script>
+<!-- AdMob SDK: se carga de forma no bloqueante -->
+<script>
+window.adsbygoogle = window.adsbygoogle || [];
+</script>
+<script async onerror="console.warn('AdMob SDK no disponible')" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1537,8 +1541,8 @@ function launchConfetti(){
 }
 function stopConfetti(){ document.getElementById('confetti').innerHTML=''; }
 </script>
-</script>
   <script>
+  document.addEventListener('DOMContentLoaded', function() {
   if (typeof navigator.serviceWorker !== 'undefined') {
     navigator.serviceWorker.register('sw.js')
   }
@@ -1556,15 +1560,20 @@ function stopConfetti(){ document.getElementById('confetti').innerHTML=''; }
   }
 
   // ====== ADMOB INIT ======
-  (function initAdMob(){
-    // Inicializar el banner
-    try{
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    }catch(e){ console.warn('AdMob banner no cargado:', e); }
-
-    // Marcar body para padding-top
+  function initAdMob(){
+    // Marcar body para padding-top del banner
     document.body.classList.add('has-banner');
-  })();
+    // Inicializar el banner (el SDK async puede no estar listo aún)
+    try{
+      (window.adsbygoogle = window.adsbygoogle || []).push({})
+    }catch(e){ console.warn('AdMob banner:', e); }
+  }
+  // Esperar a que el DOM esté listo
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initAdMob);
+  } else {
+    initAdMob();
+  }
 
   // Intersticial: muestra el overlay con cuenta atrás de 5 segundos
   let interTimer = null;
@@ -1575,7 +1584,7 @@ function stopConfetti(){ document.getElementById('confetti').innerHTML=''; }
 
     // Cargar el anuncio intersticial
     try{
-      (adsbygoogle = window.adsbygoogle || []).push({});
+      (window.adsbygoogle = window.adsbygoogle || []).push({})
     }catch(e){ console.warn('AdMob interstitial no cargado:', e); }
 
     overlay.classList.add('visible');
@@ -1627,6 +1636,7 @@ function stopConfetti(){ document.getElementById('confetti').innerHTML=''; }
       stars.appendChild(s);
     }
   })();
+  }); // end DOMContentLoaded
 </script>
 </body>
 </html>
