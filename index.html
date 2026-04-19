@@ -1542,101 +1542,78 @@ function launchConfetti(){
 function stopConfetti(){ document.getElementById('confetti').innerHTML=''; }
 </script>
   <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  // Service Worker
   if (typeof navigator.serviceWorker !== 'undefined') {
-    navigator.serviceWorker.register('sw.js')
+    navigator.serviceWorker.register('sw.js');
   }
 
+  // ====== ADMOB — Banner ======
+  // Las funciones están en scope global para que los onclick del HTML las encuentren
+  document.body.classList.add('has-banner');
+  try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
+
   // ====== SPLASH SCREEN ======
-  function startSplash(){
-    const splash = document.getElementById('screen-splash');
+  function startSplash() {
+    var splash = document.getElementById('screen-splash');
     splash.classList.add('hide');
-    setTimeout(()=>{
-      splash.style.display='none';
-      showInterstitial(function(){
-        // El juego ya está visible en screen-setup, no hace falta hacer nada más
-      });
+    setTimeout(function() {
+      splash.style.display = 'none';
+      showInterstitial();
     }, 650);
   }
 
-  // ====== ADMOB INIT ======
-  function initAdMob(){
-    // Marcar body para padding-top del banner
-    document.body.classList.add('has-banner');
-    // Inicializar el banner (el SDK async puede no estar listo aún)
-    try{
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
-    }catch(e){ console.warn('AdMob banner:', e); }
-  }
-  // Esperar a que el DOM esté listo
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', initAdMob);
-  } else {
-    initAdMob();
-  }
+  // ====== INTERSTICIAL ======
+  var interTimer = null;
 
-  // Intersticial: muestra el overlay con cuenta atrás de 5 segundos
-  let interTimer = null;
-  function showInterstitial(onComplete){
-    const overlay   = document.getElementById('admob-interstitial');
-    const countdown = document.getElementById('interCountdown');
-    const closeBtn  = document.getElementById('interCloseBtn');
+  function showInterstitial() {
+    var overlay   = document.getElementById('admob-interstitial');
+    var countdown = document.getElementById('interCountdown');
+    var closeBtn  = document.getElementById('interCloseBtn');
 
-    // Cargar el anuncio intersticial
-    try{
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
-    }catch(e){ console.warn('AdMob interstitial no cargado:', e); }
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
 
     overlay.classList.add('visible');
-    let seconds = 5;
+    var seconds = 5;
     countdown.textContent = seconds;
     countdown.classList.remove('ready');
     closeBtn.classList.remove('visible');
 
-    // Guardar callback para cuando se cierre
-    window._interOnComplete = onComplete || function(){};
-
-    interTimer = setInterval(function(){
+    clearInterval(interTimer);
+    interTimer = setInterval(function() {
       seconds--;
       countdown.textContent = seconds;
-      if(seconds <= 0){
+      if (seconds <= 0) {
         clearInterval(interTimer);
         countdown.textContent = '✕';
         countdown.classList.add('ready');
-        countdown.onclick = closeInterstitial;
         closeBtn.classList.add('visible');
       }
     }, 1000);
   }
 
-  function closeInterstitial(){
+  function closeInterstitial() {
     clearInterval(interTimer);
-    const overlay = document.getElementById('admob-interstitial');
+    var overlay = document.getElementById('admob-interstitial');
     overlay.classList.remove('visible');
-    if(typeof window._interOnComplete === 'function'){
-      window._interOnComplete();
-      window._interOnComplete = null;
-    }
+    // La pantalla de configuración ya está activa debajo, no hay nada más que hacer
   }
 
-  // Estrellas flotantes en el splash
-  (function(){
-    const stars = document.getElementById('splashStars');
-    const emojis = ['⭐','🌟','✨','🎉','🎊','🌈','🎈','💫'];
-    for(let i=0;i<18;i++){
-      const s = document.createElement('div');
+  // ====== ESTRELLAS SPLASH ======
+  document.addEventListener('DOMContentLoaded', function() {
+    var stars  = document.getElementById('splashStars');
+    var emojis = ['⭐','🌟','✨','🎉','🎊','🌈','🎈','💫'];
+    for (var i = 0; i < 18; i++) {
+      var s = document.createElement('div');
       s.className = 'splash-star';
-      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-      s.style.cssText = `
-        left:${Math.random()*100}%;
-        font-size:${1+Math.random()*1.4}rem;
-        animation-duration:${4+Math.random()*5}s;
-        animation-delay:${-Math.random()*6}s;
-      `;
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.cssText =
+        'left:' + (Math.random()*100) + '%;' +
+        'font-size:' + (1 + Math.random()*1.4) + 'rem;' +
+        'animation-duration:' + (4 + Math.random()*5) + 's;' +
+        'animation-delay:-' + (Math.random()*6) + 's;';
       stars.appendChild(s);
     }
-  })();
-  }); // end DOMContentLoaded
+  });
 </script>
 </body>
 </html>
