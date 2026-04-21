@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Privacidad - Webdibertyviaje</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 40px; color: #444; }
+        h1 { color: #2c3e50; font-size: 1.5rem; }
+        .info { background: #f4f4f4; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>Política de Privacidad de Webdibertyviaje</h1>
+    
+    <div id="contenido-privacidad">
+        <p>En esta aplicación nos tomamos en serio tu sencillez. Por eso:</p>
+        <div class="info" id="lista-datos"></div>
+        <p><strong>Uso:</strong> Estos datos se utilizan exclusivamente para personalizar tu partida y mostrar tu puntuación en el ranking local.</p>
+        <p><strong>Seguridad:</strong> No compartimos tu información con terceros ni la usamos para publicidad.</p>
+    </div>
+
+    <script>
+        // Los dos únicos datos que pides
+        const datos = ["Tu Nombre", "Tu Edad"];
+        const contenedor = document.getElementById("lista-datos");
+
+        let html = "<ul>";
+        datos.forEach(d => {
+            html += `<li>Solo tratamos: <strong>${d}</strong></li>`;
+        });
+        html += "</ul>";
+
+        contenedor.innerHTML = html;
+    </script>
+
+    <hr>
+    <p><small>Si tienes dudas, puedes cerrar la aplicación en cualquier momento.</small></p>
+
+</body>
+</html>
